@@ -40,8 +40,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <h5>Donut Chart</h5>
-                                <select  id = sprint class="form-control-sm float-right" style="width: 30%">
-{#                                    <option value="" selected disabled>Select Sprint</option>#}
+                                <select  id=sprint class="form-control-sm float-right" style="width: 30%">
+                                    <option value="" selected disabled>Select Sprint</option>
                                     {% for sprint in donut_chart.sprints %}
                                         <option value="{{ sprint.id }}">{{ sprint.name }}</option>
                                     {% endfor %}
@@ -63,7 +63,20 @@
                         <div class="card">
                             <div class="card-header">
                                 <h5>Bar [ Simple ] Chart</h5>
+                                <select  id = r2-sprint class="form-control-sm float-right" style="width: 30%">
+                                    <option value="" selected disabled>Select Sprint</option>
+                                    {% for sprint in donut_chart.sprints %}
+                                        <option value="{{ sprint.id }}">{{ sprint.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <select class="form-control-sm float-right mr-2 r2-project" style="width: 30%">
+{#                                    <option value="" selected disabled>Select Project</option>#}
+                                    {% for project_value in donut_chart.project %}
+                                        <option value="{{ project_value.id }}">{{ project_value.name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
+
                             <div class="card-block">
                                 <div id="morris-bar-chart" style="height:300px"></div>
                             </div>
@@ -137,23 +150,122 @@
     <script src="/static/assets/plugins/chart-morris/js/morris.min.js"></script>
     <script>
 
-        $(document).ready(function() {
-            var i = 0;
-            var val  = $('.project').val()
-              $.ajax({ url: '/clickup/sprints/',
-        data: {
-                 value :  val ,
-                },
-        success: function(response){
-
-                let sprints_detail = response.sprints.map(sprint => { return {id: sprint.id, name: sprint.name }})
-                var sprintoption = '<option value=' + sprints_detail[i]['id'] +'>' + sprints_detail[i]['name'] +'</option>';
-                for (let i = 1 ; i < sprints_detail.length; i++){
-                    sprintoption += "<option value='" + sprints_detail[i]['id'] + "'>" + sprints_detail[i]['name'] + "</option>";
-                    $('#sprint').html(sprintoption);
+        function refresh_report1(todo, completed){
+            $("#morris-donut-chart").html("");
+             let gg_data = [{
+                    value: todo,
+                    label: 'ToDo'
+                }, {
+                    value: completed,
+                    label: 'Completed'
                 }
+             ]
+             Morris.Donut({
+                element: 'morris-donut-chart',
+                data: gg_data,
+                colors: ['#1de9b6', '#A389D4'],
+                resize: true,
+                formatter: function(x) {
+                    return "Tasks : " + x
+                }
+            });
         }
-    });
+
+        function fetch_reports(project_id){
+            $.ajax({
+                type: 'GET',
+                url: '/clickup/sprints/',
+                data: {
+                    value : project_id,
+                },
+                success: function (response) {
+                    let todo_value = response.donut_chart.todo;
+                    let completed_value = response.donut_chart.completed;
+                    refresh_report1(todo_value, completed_value);
+                    let sprints_detail = response.sprints.map(sprint => { return {id: sprint.id, name: sprint.name }})
+                    let sprint_option = '<option value="" selected disabled>Select Sprint</option>';
+                    for (let i = 0 ; i < sprints_detail.length; i++){
+                    sprint_option += "<option value='" + sprints_detail[i]['id'] + "'>" + sprints_detail[i]['name'] + "</option>";
+                        $('#sprint').html(sprint_option);
+
+                    }
+                }
+            });
+        }
+        function fetch_report2(project_id){
+            $.ajax({
+                type: 'GET',
+                url: '/clickup/sprints/',
+                data: {
+                    value : project_id,
+                },
+                success: function (response) {
+                    let todo_value = response.donut_chart.todo;
+                    let completed_value = response.donut_chart.completed;
+                    refresh_report1(todo_value, completed_value);
+                    let sprints_detail = response.sprints.map(sprint => { return {id: sprint.id, name: sprint.name }})
+                    let sprint_option = '<option value="" selected disabled>Select Sprint</option>';
+                    for (let i = 0 ; i < sprints_detail.length; i++){
+                    sprint_option += "<option value='" + sprints_detail[i]['id'] + "'>" + sprints_detail[i]['name'] + "</option>";
+                        $('#r2-sprint').html(sprint_option);
+
+                    }
+                }
+            });
+        }
+
+        $('.project').on('change', function() {
+            let project_id = this.value;
+            fetch_reports(project_id);
+        });
+         $('.r2-project').on('change', function() {
+            let project_id = this.value;
+            fetch_report2(project_id);
+        });
+
+      //  $('#r2-sprint').on('change', function() {
+           // let project_id = $(".r2-project").find(":selected").val();
+         //   let sprint_id = this.value;
+         //    $.ajax({
+              //  type: 'GET',
+             //   url: '/clickup/eachsprint/',
+            //    data: {
+              //      value : project_id,
+            //        sprint : sprint_id
+          //      },
+        //        success: function (response) {
+              //      let todo_value = response.donut_chart.todo;
+            //        let completed_value = response.donut_chart.completed;
+          //          refresh_report1(todo_value, completed_value);
+        //            }
+      //      });
+
+    //    });
+        $('#sprint').on('change', function() {
+            let project_id = $(".project").find(":selected").val();
+            let sprint_id = this.value;
+             $.ajax({
+                type: 'GET',
+                url: '/clickup/eachsprint/',
+                data: {
+                    value : project_id,
+                    sprint : sprint_id
+                },
+                success: function (response) {
+                    let todo_value = response.donut_chart.todo;
+                    let completed_value = response.donut_chart.completed;
+                    refresh_report1(todo_value, completed_value);
+                    }
+            });
+
+        });
+
+        $(document).ready(function() {
+            let project_id  = $('.project').val()
+            let project_id_r2 = $('.r2-project').val()
+            fetch_reports(project_id);
+            fetch_report2(project_id_r2)
+
     setTimeout(function() {
     // [ bar-simple ] chart start
     Morris.Bar({
@@ -456,53 +568,13 @@
     });
     // [ line-smooth-chart ] end
 
-    // [ Donut-chart ] Start
-        let gg_data = [{
-                value: {{ donut_chart.todo }},
-                label: 'ToDo'
-            },
-            {
-                value: {{ donut_chart.completed }},
-                label: 'Completed'
-            }
-        ]
-        console.log(gg_data);
-    var graph = Morris.Donut({
-        element: 'morris-donut-chart',
-        data: gg_data,
-        colors: [
-            '#1de9b6',
-            '#A389D4',
-        ],
-        resize: true,
-        formatter: function(x) {
-            return "Tasks : " + x
-        }
-    });
+    {#// [ Donut-chart ] Start#}
+
+
     // [ Donut-chart ] end
         }, 700);
 });
-  $('.project').on('change', function() {
-      var val = this.value;
 
-        $.ajax({
-            type: 'GET',
-             url: '/clickup/sprints/',
-             data: {
-                 value : val,
-                },
-            success: function (response) {
-                debugger;
-                let sprints_detail = response.sprints.map(sprint => { return {id: sprint.id, name: sprint.name }})
-                var i = 0 ;
-                var sprintoption = '<option value=' + sprints_detail[i]['id'] +'>' + sprints_detail[i]['name'] +'</option>';
-                for (let i = 1 ; i < sprints_detail.length; i++){
-                    sprintoption += "<option value='" + sprints_detail[i]['id'] + "'>" + sprints_detail[i]['name'] + "</option>";
-                    $('#sprint').html(sprintoption);
-                }
-      }
-   });
-});
     </script>
 
 {% endblock javascripts %}
