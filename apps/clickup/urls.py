@@ -6,6 +6,6 @@ app_name = "clickup"
 
 urlpatterns = [
     path("", ReportsClass.as_view(), name='reports'),
-    path("/sprints/", no_of_sprints, name='sprints'),
-    path("/eachsprint/", tasks_against_sprint, name='sprints'),
+    path("sprints/", no_of_sprints, name='sprints'),
+    path("eachsprint/", tasks_against_sprint, name='sprints'),
 ]
