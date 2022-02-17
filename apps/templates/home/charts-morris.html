@@ -172,9 +172,10 @@
         }
 
         function fetch_reports(project_id){
+            debugger;
             $.ajax({
                 type: 'GET',
-                url: '/clickup/sprints/',
+                url: 'sprints/',
                 data: {
                     value : project_id,
                 },
@@ -195,7 +196,7 @@
         function fetch_report2(project_id){
             $.ajax({
                 type: 'GET',
-                url: '/clickup/sprints/',
+                url: 'sprints/',
                 data: {
                     value : project_id,
                 },
@@ -246,7 +247,7 @@
             let sprint_id = this.value;
              $.ajax({
                 type: 'GET',
-                url: '/clickup/eachsprint/',
+                url: 'eachsprint/',
                 data: {
                     value : project_id,
                     sprint : sprint_id
@@ -264,8 +265,9 @@
             let project_id  = $('.project').val()
             let project_id_r2 = $('.r2-project').val()
             fetch_reports(project_id);
-            fetch_report2(project_id_r2)
+            fetch_report2(project_id_r2);
 
+    // Other static graphs
     setTimeout(function() {
     // [ bar-simple ] chart start
     Morris.Bar({

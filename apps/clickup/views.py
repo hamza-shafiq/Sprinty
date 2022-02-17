@@ -43,18 +43,6 @@ def fetch_chart1(request, sprint_id):
     }
 
 
-@method_decorator(login_required(login_url='/login'), name="dispatch")
-class ReportsClass(TemplateView):
-    template_name = 'home/charts-morris.html'
-
-    def get(self, request, *args, **kwargs):
-        project_details = ClickUp().get_projects_against_space(space_id=3322943)
-        sprint_id = project_details[0]['lists'][0]['id']
-        context = fetch_chart1(request, sprint_id)
-        context['donut_chart']['project'] = project_details
-        return render(request, self.template_name, context=context)
-
-
 def no_of_sprints(request):
     project_id = request.GET.get("value")
     selected_proj_sprint_list = ClickUp().get_sprints_against_project(project_id)
@@ -92,18 +80,3 @@ def team_velocity(request):
     project_id = request.GET.get("value")
     sprint_id = request.GET.get("sprint")
     result = ClickUp().get_clickup_tasks(sprint_id=sprint_id)
-
-
-# def reports(request):
-#     result = ClickUp().get_clickup_tasks(sprint_id=169390750)
-#     todo = result['todo']
-#     completed = result['completed']
-#
-#     context = {
-#         'donut_chart': {
-#             "todo": todo,
-#             "completed": completed
-#         }
-#     }
-#     html_template = loader.get_template('home/charts-morris.html')
-#     return HttpResponse(html_template.render(context, request))
