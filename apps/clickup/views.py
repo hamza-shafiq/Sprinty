@@ -48,7 +48,7 @@ class ReportsClass(TemplateView):
     template_name = 'home/charts-morris.html'
 
     def get(self, request, *args, **kwargs):
-        project_details = ClickUp().get_projects_against_space(space_id=55430882)
+        project_details = ClickUp().get_projects_against_space(space_id=3322943)
         sprint_id = project_details[0]['lists'][0]['id']
         context = fetch_chart1(request, sprint_id)
         context['donut_chart']['project'] = project_details
@@ -86,6 +86,13 @@ def tasks_against_sprint(request):
             report1['completed'] += 1
     return JsonResponse({
         "donut_chart": report1}, status=200)
+
+
+def team_velocity(request):
+    project_id = request.GET.get("value")
+    sprint_id = request.GET.get("sprint")
+    result = ClickUp().get_clickup_tasks(sprint_id=sprint_id)
+
 
 # def reports(request):
 #     result = ClickUp().get_clickup_tasks(sprint_id=169390750)

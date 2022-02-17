@@ -7,7 +7,8 @@ import requests
 class ClickUp:
     def __init__(self):
         self.base_url = "https://api.clickup.com/api/v2/"
-        self.token = "3523293_40190610fa6da3b679fc2914d54be43b75e8c9d5"
+        # self.token = "3523293_40190610fa6da3b679fc2914d54be43b75e8c9d5"
+        self.token = "pk_3344634_YWC3QN6RWXQL9JMFG7UOV5UG3CC30TLB"
         self.header = {"Authorization": self.token}
 
     def get_clickup_space(self, space_id):
@@ -52,7 +53,16 @@ class ClickUp:
     def get_clickup_tasks(self, sprint_id):
         url = self.base_url + "list/" + str(sprint_id) + "/task?archived=false&status%5B%5D=complete&include_closed=true"
         r = requests.get(url, headers=self.header)
+        resp = {}
+        if r.status_code == 200:
+            data = r.json()
+            resp = data['tasks']
 
+        return resp
+
+    def get_team_velocity(self, sprint_id):
+        url = self.base_url + "list/" + str(sprint_id) + "/task"
+        r = requests.get(url, headers=self.header)
         resp = {}
         if r.status_code == 200:
             data = r.json()
@@ -73,15 +83,5 @@ class ClickUp:
 # ClickUp().get_sprints_against_project(project_id=103318183)
 # ClickUp().get_clickup_list(list_id=169390750)
 # ClickUp().get_clickup_tasks(sprint_id=169390750)
+ClickUp().get_team_velocity(sprint_id=163340490)
 # ClickUp().get_clickup_task(task_id='201rb33')
-
-
-
-# result = [{
-            #     'value': 60,
-            #     'label': 'Data 1'
-            # },
-            # {
-            #     'value': 5,
-            #     'label': 'Data 1'
-            # }]
