@@ -83,5 +83,5 @@ class ClickUp:
 # ClickUp().get_sprints_against_project(project_id=103318183)
 # ClickUp().get_clickup_list(list_id=169390750)
 # ClickUp().get_clickup_tasks(sprint_id=169390750)
-ClickUp().get_team_velocity(sprint_id=163340490)
+ClickUp().get_team_velocity(sprint_id=169237273)
 # ClickUp().get_clickup_task(task_id='201rb33')

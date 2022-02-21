@@ -39,7 +39,7 @@
                     <div class="col-xl-6">
                         <div class="card">
                             <div class="card-header">
-                                <h5>Donut Chart</h5>
+                                <h5>Project Report</h5>
                                 <select  id=sprint class="form-control-sm float-right" style="width: 30%">
                                     <option value="" selected disabled>Select Sprint</option>
                                     {% for sprint in donut_chart.sprints %}
@@ -62,19 +62,19 @@
                     <div class="col-xl-6">
                         <div class="card">
                             <div class="card-header">
-                                <h5>Bar [ Simple ] Chart</h5>
-                                <select  id = r2-sprint class="form-control-sm float-right" style="width: 30%">
-                                    <option value="" selected disabled>Select Sprint</option>
-                                    {% for sprint in donut_chart.sprints %}
-                                        <option value="{{ sprint.id }}">{{ sprint.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <select class="form-control-sm float-right mr-2 r2-project" style="width: 30%">
+                                <h5>Team Velocity</h5>
+{#                                <select  id = r2-sprint class="form-control-sm float-right" style="width: 30%">#}
+{#                                    <option value="" selected disabled>Select Sprint</option>#}
+{#                                    {% for sprint in donut_chart.sprints %}#}
+{#                                        <option value="{{ sprint.id }}">{{ sprint.name }}</option>#}
+{#                                    {% endfor %}#}
+{#                                </select>#}
+{#                                <select class="form-control-sm float-right mr-2 r2-project" style="width: 30%">#}
 {#                                    <option value="" selected disabled>Select Project</option>#}
-                                    {% for project_value in donut_chart.project %}
-                                        <option value="{{ project_value.id }}">{{ project_value.name }}</option>
-                                    {% endfor %}
-                                </select>
+{#                                    {% for project_value in donut_chart.project %}#}
+{#                                        <option value="{{ project_value.id }}">{{ project_value.name }}</option>#}
+{#                                    {% endfor %}#}
+{#                                </select>#}
                             </div>
 
                             <div class="card-block">
@@ -171,8 +171,23 @@
             });
         }
 
+        function refresh_team_velocity(team_velocity){
+            $("#morris-bar-chart").html("");
+            Morris.Bar({
+                element: 'morris-bar-chart',
+                data: team_velocity,
+                xkey: 'y',
+                barSizeRatio: 0.70,
+                barGap: 3,
+                resize: true,
+                responsive:true,
+                ykeys: ['a', 'b'],
+                labels: ['Time Estimate', 'Time Tracked'],
+                barColors: ["0-#1de9b6-#1dc4e9", "0-#899FD4-#A389D4", "#04a9f5"]
+            });
+        }
+
         function fetch_reports(project_id){
-            debugger;
             $.ajax({
                 type: 'GET',
                 url: 'sprints/',
@@ -183,6 +198,8 @@
                     let todo_value = response.donut_chart.todo;
                     let completed_value = response.donut_chart.completed;
                     refresh_report1(todo_value, completed_value);
+                    refresh_team_velocity(response.team_velocity);
+
                     let sprints_detail = response.sprints.map(sprint => { return {id: sprint.id, name: sprint.name }})
                     let sprint_option = '<option value="" selected disabled>Select Sprint</option>';
                     for (let i = 0 ; i < sprints_detail.length; i++){
@@ -270,48 +287,48 @@
     // Other static graphs
     setTimeout(function() {
     // [ bar-simple ] chart start
-    Morris.Bar({
-        element: 'morris-bar-chart',
-        data: [{
-                y: '2008',
-                a: 50,
-                b: 40,
-                c: 35,
-            },
-            {
-                y: '2009',
-                a: 75,
-                b: 65,
-                c: 60,
-            },
-            {
-                y: '2010',
-                a: 50,
-                b: 40,
-                c: 55,
-            },
-            {
-                y: '2011',
-                a: 75,
-                b: 65,
-                c: 85,
-            },
-            {
-                y: '2012',
-                a: 100,
-                b: 90,
-                c: 40,
-            }
-        ],
-        xkey: 'y',
-        barSizeRatio: 0.70,
-        barGap: 3,
-        resize: true,
-        responsive:true,
-        ykeys: ['a', 'b', 'c'],
-        labels: ['Bar 1', 'Bar 2', 'Bar 3'],
-        barColors: ["0-#1de9b6-#1dc4e9", "0-#899FD4-#A389D4", "#04a9f5"]
-    });
+    {#Morris.Bar({#}
+    {#    element: 'morris-bar-chart',#}
+    {#    data: [{#}
+    {#            y: '2008',#}
+    {#            a: 50,#}
+    {#            b: 40,#}
+    {#            c: 35,#}
+    {#        },#}
+    {#        {#}
+    {#            y: '2009',#}
+    {#            a: 75,#}
+    {#            b: 65,#}
+    {#            c: 60,#}
+    {#        },#}
+    {#        {#}
+    {#            y: '2010',#}
+    {#            a: 50,#}
+    {#            b: 40,#}
+    {#            c: 55,#}
+    {#        },#}
+    {#        {#}
+    {#            y: '2011',#}
+    {#            a: 75,#}
+    {#            b: 65,#}
+    {#            c: 85,#}
+    {#        },#}
+    {#        {#}
+    {#            y: '2012',#}
+    {#            a: 100,#}
+    {#            b: 90,#}
+    {#            c: 40,#}
+    {#        }#}
+    {#    ],#}
+    {#    xkey: 'y',#}
+    {#    barSizeRatio: 0.70,#}
+    {#    barGap: 3,#}
+    {#    resize: true,#}
+    {#    responsive:true,#}
+    {#    ykeys: ['a', 'b', 'c'],#}
+    {#    labels: ['Bar 1', 'Bar 2', 'Bar 3'],#}
+    {#    barColors: ["0-#1de9b6-#1dc4e9", "0-#899FD4-#A389D4", "#04a9f5"]#}
+    {#});#}
     // [ bar-simple ] chart end
 
     // [ bar-stacked ] chart start
